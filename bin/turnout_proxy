@@ -1,0 +1,42 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'optparse'
+require 'turnout_proxy'
+
+options = {
+  :lock_file => "/tmp/turnout.lock",
+  :default => { :host => "127.0.0.1" },
+  :alternate => { :host => "127.0.0.1" },
+  :host => "0.0.0.0",
+  :port => 5678,
+  :debug => false
+}
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: turnout_proxy [options]"
+  opts.version = TurnoutProxy::VERSION
+
+  opts.separator "Proxy options:"
+  opts.on("--host HOST", "Proxy host (Default: localhost)") { |v| options[:host] = v }
+  opts.on("--port PORT", Integer, "Proxy port (Default: 5678)") { |v| options[:port] = v }
+  opts.on("--lock-file FILE", "File, which existence determines destination server (Default: /tmp/turnout.lock)") { |v| options[:lock_file] = v }
+
+  opts.separator "Default destination server options:"
+  opts.on("--default-host HOST", "(Default: localhost)") { |v| options[:default][:host] = v }
+  opts.on("--default-port PORT", Integer) { |v| options[:default][:port] = v }
+
+  opts.separator "Alternate destination server options:"
+  opts.on("--alternate-host HOST", "(Default: localhost)") { |v| options[:alternate][:host] = v }
+  opts.on("--alternate-port PORT", Integer) { |v| options[:alternate][:port] = v }
+
+  opts.separator "Special options:"
+  opts.on("--debug") { |*| options[:debug] = true }
+end.parse!
+
+Signal.trap("SIGINT") do
+  puts "Terminating"
+  exit
+end
+
+TurnoutProxy.run(options)
