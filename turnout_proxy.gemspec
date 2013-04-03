@@ -2,7 +2,7 @@
 
 $:.unshift File.expand_path('../lib/', __FILE__)
 
-require 'turnout_proxy'
+require 'turnout_proxy/version'
 require 'date'
 
 Gem::Specification.new do |s|

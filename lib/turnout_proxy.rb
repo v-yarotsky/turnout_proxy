@@ -1,10 +1,8 @@
 require 'em-proxy'
 require 'turnout_proxy/host_chooser'
+require 'turnout_proxy/version'
 
 module TurnoutProxy
-  version_file = File.expand_path('../VERSION', File.dirname(__FILE__))
-  VERSION = File.read(version_file).freeze
-
   def self.run(options = {})
     Proxy.start(options) do |conn|
       callbacks = HostChooser.new(conn, options)
