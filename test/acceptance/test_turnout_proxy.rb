@@ -23,11 +23,11 @@ class TestTurnoutProxy < TurnoutProxyTestCase
     FileUtils.rm_rf TEST_LOCK_FILE
   end
 
-  def with_running_proxy
+  def with_running_proxy(default_port = 8083, alternate_port = 8084)
     router = PROJECT_ROOT.join("bin/turnout_proxy")
-    pid = spawn("ruby -Ilib #{router} --default-port=8083 --alternate-port=8084 --lock-file=#{TEST_LOCK_FILE}")
+    pid = spawn("ruby -Ilib #{router} --default-port=#{default_port} --alternate-port=#{alternate_port} --lock-file=#{TEST_LOCK_FILE}")
     sleep 0.5
-    yield
+    yield pid
     sleep 0.5
   ensure
     Process.kill(:SIGQUIT, pid)
@@ -48,6 +48,15 @@ class TestTurnoutProxy < TurnoutProxyTestCase
       called = Net::HTTP.get(URI("http://127.0.0.1:5678")) == "S2"
     end
     assert called, "Expected to proxy to server on 8084"
+  end
+
+  test "doesn't fail if destination server isn't responding" do
+    @pid = nil
+    with_running_proxy(8085) do |pid|
+      @pid = pid
+      Net::HTTP.get(URI("http://127.0.0.1:5678")) rescue nil
+    end
+    Process.kill 0, @pid
   end
 
 end
