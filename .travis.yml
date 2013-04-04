@@ -7,3 +7,5 @@ rvm:
 branches:
   only:
     - master
+env:
+  - rvmsudo_secure_path=1

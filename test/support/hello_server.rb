@@ -1,13 +1,13 @@
 require 'rubygems'
 require 'bundler/setup'
-require 'posix/spawn'
+require 'support/travis_spawn'
 require 'eventmachine'
 
 class HelloServer
-  include POSIX::Spawn
+  include TravisSpawn
 
   def initialize(port, message)
-    @pid = spawn("ruby #{__FILE__} #{port} #{message}")
+    @pid = spawn("ruby -Itest #{__FILE__} #{port} #{message}")
     at_exit { die }
   end
 

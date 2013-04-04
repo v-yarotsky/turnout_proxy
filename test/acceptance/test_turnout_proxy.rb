@@ -1,12 +1,12 @@
 require 'test_helper'
 require 'fileutils'
 require 'net/http'
-require 'posix/spawn'
+require 'support/travis_spawn'
 require 'support/hello_server'
 require 'turnout_proxy'
 
 class TestTurnoutProxy < TurnoutProxyTestCase
-  include POSIX::Spawn
+  include TravisSpawn
   include TurnoutProxy
 
   TEST_LOCK_FILE = PROJECT_ROOT.join("lock")
