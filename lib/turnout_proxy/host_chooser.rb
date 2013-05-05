@@ -1,24 +1,32 @@
 module TurnoutProxy
 
   class HostChooser
-    attr_accessor :file_checker
-
     def initialize(connection, options = {})
       @connection = connection
-      @file_checker = File
+      @file_checker = options.fetch(:file_checker) { File }
 
       @default = validate_host(options[:default])
       @alternate = validate_host(options[:alternate])
 
       @lock_file = options[:lock_file]
+
+      choose_destination_server!
     end
 
     def on_data(data)
-      use_alternate? ? @connection.server(:alternate, @alternate) : @connection.server(:default, @default)
       data
     end
 
     private
+
+    def choose_destination_server!
+      name, proxy_options = if use_alternate?
+        [:alternate, @alternate]
+      else
+        [:default, @default]
+      end
+      @connection.server(name, proxy_options.merge(:relay_client => true, :relay_server => true))
+    end
 
     def use_alternate?
       @file_checker.exists?(@lock_file)

@@ -31,14 +31,14 @@ class TestHostChooser < TurnoutProxyTestCase
     @file_checker = FakeFile.new
   end
 
-  ALTERNATE_CONFIG = { :host => "127.0.0.1", :port => 19999 }
-  DEFAULT_CONFIG = { :host => "127.0.0.1", :port => 9012 }
+  ALTERNATE_CONFIG = { :host => "127.0.0.1", :port => 19999, :relay_client => true, :relay_server => true }
+  DEFAULT_CONFIG = { :host => "127.0.0.1", :port => 9012, :relay_client => true, :relay_server => true }
 
   def host_chooser
     host_chooser = HostChooser.new(@connection,
                                    :default => DEFAULT_CONFIG,
-                                   :alternate => ALTERNATE_CONFIG)
-    host_chooser.file_checker = @file_checker
+                                   :alternate => ALTERNATE_CONFIG,
+                                   :file_checker => @file_checker)
     host_chooser
   end
 
