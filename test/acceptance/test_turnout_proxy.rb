@@ -51,12 +51,10 @@ class TestTurnoutProxy < TurnoutProxyTestCase
   end
 
   test "doesn't fail if destination server isn't responding" do
-    @pid = nil
     with_running_proxy(8085) do |pid|
-      @pid = pid
       Net::HTTP.get(URI("http://127.0.0.1:5678")) rescue nil
+      assert_equal 0, `kill -0 #{pid}`.chomp.to_i
     end
-    Process.kill 0, @pid
   end
 
 end

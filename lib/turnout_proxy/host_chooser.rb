@@ -24,8 +24,6 @@ module TurnoutProxy
       @file_checker.exists?(@lock_file)
     end
 
-    private
-
     def validate_host(host_config)
       if host_config.nil? || String(host_config[:host]).empty?  || host_config[:port].nil?
         raise ArgumentError, "Bad host config, both host and port must be present."
