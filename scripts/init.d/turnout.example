@@ -1,0 +1,43 @@
+#!/bin/bash
+#
+# turnout
+#
+# chkconfig: - 85 15
+# description: turnout proxy server
+# processname: turnout
+# pidfile: /var/run/turnout.pid
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+PIDFILE=/var/run/turnout.pid
+TURNOUT_LOCK_FILE=/tmp/turnout.lock
+PATH=/opt/ruby-enterprise-1.8.7-2011.03/bin:$PATH
+
+start() {
+        if [ -f $PIDFILE ]; then exit 0; fi
+        turnout_proxy --port=5660 --default-port=9012 --alternate-port=19990 --lock-file=$TURNOUT_LOCK_FILE & echo $! > $PIDFILE
+ echo 'done'
+        RETVAL=0
+        return $RETVAL
+}
+
+stop() {
+        killproc -p $PIDFILE
+        RETVAL=0
+        return $RETVAL
+}
+
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  *)
+        echo $"Usage: $prog {start|stop}"
+        exit 1
+esac
+
+exit $RETVAL
